@@ -2,8 +2,20 @@ import 'package:bloc_flutter/bloc/products_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProductsScreen extends StatelessWidget {
+class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
+
+  @override
+  State<ProductsScreen> createState() => _ProductsScreenState();
+}
+
+class _ProductsScreenState extends State<ProductsScreen> {
+  @override
+  void initState() {
+    context.read<ProductsBloc>().add(ProductsLoadedEvent());
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +43,10 @@ class ProductsScreen extends StatelessWidget {
               },
             );
           } else if (state is ProductsErrorState) {
-            return Text(
-              state.toString(),
+            return Center(
+              child: Text(
+                state.toString(),
+              ),
             );
           }
           return const SizedBox();
