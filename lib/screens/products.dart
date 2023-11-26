@@ -1,4 +1,6 @@
+import 'package:bloc_flutter/bloc/products_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({super.key});
@@ -13,18 +15,28 @@ class ProductsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
-        child: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text(
-              "Products",
-              style: TextStyle(
-                  color: Colors.deepOrange,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600),
-            )),
+      body: BlocBuilder<ProductsBloc, ProductsState>(
+        builder: (context, state) {
+          if (state is ProductsLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          } else if (state is ProductsLoadedState) {
+            return ListView.builder(
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: Text(state.productsModel[index].category.toString()),
+                );
+              },
+            );
+          } else if (state is ProductsErrorState) {
+            return Text(
+              state.toString(),
+            );
+          }
+          return const SizedBox();
+        },
       ),
     );
   }

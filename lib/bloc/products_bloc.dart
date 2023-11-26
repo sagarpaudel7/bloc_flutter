@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_flutter/models/product_models.dart';
 import 'package:equatable/equatable.dart';
@@ -18,7 +20,16 @@ class ProductsBloc extends Bloc<ProductsLoadedEvent, ProductsState> {
           throw Exception("Failed to load Products");
         }
       } catch (e) {
-        emit(ProductsErrorState(e.toString()));
+        if (e is SocketException) {
+          // ignore: avoid_print
+          print("Network error: $e");
+          emit(const ProductsErrorState(
+              "Network error. Please check your internet connection."));
+        } else {
+          // ignore: avoid_print
+          print("Error in ProductsBloc: $e");
+          emit(ProductsErrorState("Failed to load Products: $e"));
+        }
       }
     });
   }
